@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Logout</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+   <body id="ump-logout-page">
+        <div id="ump-logout-container">
+            <div id="ump-logout-logo">
+                <div style="width: 100%;height: 100%;background: url(/dataintegration-registry/images/Login_Logo.png) no-repeat center;"></div>
+            </div>
+            <div class="ump-logout-align" style="margin-top: 20px !important; padding-bottom: 0px !important;">
+                <img src="/dataintegration-registry/images/divider_light.png" class="upper-divider" style="width: 100%;height:2px;">
+            </div>
+            <div class="ump-logout-align" id="ump-logout-msg">
+                Welcome to Data Integration Registry
+            </div>
+            <div class="ump-logout-align" id="ump-login-btn-pnl">
+                <button class="ump-button" id="umpLoginBtn" (click)="httpsLogin()">Login</button>
+            </div>
+        </div>
+    </body>
+</html>
+<router-outlet></router-outlet>

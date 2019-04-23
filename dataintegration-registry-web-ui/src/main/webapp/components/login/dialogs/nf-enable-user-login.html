@@ -1,0 +1,578 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+    <link rel='stylesheet' href='dataintegration-registry/fonts/fusion-font/style.css'/>
+    <link rel='stylesheet' href='dataintegration-registry/fusion-design/css/fusion.css'/>
+    <!-- custom JavaScript -->
+<div id="nifi-registry-user-login-dialog">
+    <div class="pad-bottom-md" fxLayout="row" fxLayoutAlign="space-between center">
+        <span class="dialog-title md-card-title">User Management Server Authentication</span>
+        <button mat-icon-button (click)="cancel()">
+                <mat-icon color="primary">close</mat-icon>
+        </button> 
+    </div>
+    <div id="firstPage"  *ngIf="nfRegistryService.enableApplicationUrl" fxLayout="column" fxLayoutAlign="space-between start" class="panels-inner-content-height pad-bottom-md">
+       
+                <div fxFlex="25" id="first-row" class="first-row-content" style="width: 100%">
+                   <p class="registration-headingstyle text-center">Register Application </p>
+                    <p class="registration-messagestyle text-center">Copy the URL for registering Data Integration with User Management Server</p>
+                </div>
+        <div class="text-center usernameInput pad-bottom-md fill-available-width">
+                <div #usernameinput id="register-info" class="applicationUrl">
+                <div id="register-link" class="register-link-alignmentstyle">{{nfRegistryService.applicationUrl}}</div>
+                <button class="copy-button icon-copy" (click)="copyInputMessage()" value="click to copy" >
+            </button>
+            <div id="snackbar">URL Copied</div>
+                </div>
+        </div>    
+        <div class ="footer" fxLayout="row">
+            
+        </div>
+        <div  id="align-button" class ="footer" fxLayout="row">
+            <span fxFlex></span>
+            <button [disabled]="" (click)="NavigateToApplicationDetails()" class="footer-next-button f-primary-button push-left-sm"
+                i18n="Log in|A button for attempting to authenticate with the registry.@@nf-user-login-button">
+                Next
+            </button>
+        </div>
+    </div>    
+    <div id="secondPage" *ngIf="nfRegistryService.enableApplicationDetails" fxLayout="column" fxLayoutAlign="space-between start" class="panels-inner-content-height pad-bottom-md" style ="display:none ! important">
+        <div fxFlex="25" style="width: 100%">
+            <p class="registration-headingstyle-panel2 text-center">Please enter the below detail to conforming registration</p>
+            <p class="registration-messagestyle-panel2 text-center">with User Management Server</p>
+        </div>
+        <mat-progress-spinner *ngIf="nfRegistryService.enablePanelSpinner" id="loading-spinner" mode="indeterminate"></mat-progress-spinner>
+        <!--<mat-spinner *ngIf="nfRegistryService.enablePanelSpinner"></mat-spinner>-->
+        <div class="set-width text-center">
+            <!--   <input #umsUrl type="text" matInput floatPlaceholder="always" placeholder="Ums url"
+                    [(ngModel)]="nfRegistryService.umsBaseUrl> -->
+            <div fxLayout="row" class="panel-field-header">
+                <p>UMS base address</p>
+            </div>
+
+            <input #umsUrl matInputf  spellcheck="false"  class="umsUrl input-fields" floatPlaceholder="always" placeholder="http://<hostname>:<portno>"
+                   focused="true" 
+                   [(ngModel)]="nfRegistryService.umsBaseUrl">
+ 
+        </div>
+        <div class="set-width text-center">
+             <div fxLayout="row" class="panel-field-header">
+                <p>Client id</p>
+            </div>
+                <input #clientId   matInputf   spellcheck="false" class="input-fields" (ngModelChange)= "checkFieldEmpty($event)"   [ngModel]="input1" floatPlaceholder="always" name="ClientId" placeholder="Client id">
+                {{input1}}
+        </div>
+        <div class="set-width text-center pad-bottom-md">
+              <div fxLayout="row" class="panel-field-header">
+                <p>Client secret</p>
+            </div>
+                <input #clientSecret matInputf spellcheck="false"  class="input-fields"  (ngModelChange)= "checkFieldEmpty($event)"   [ngModel]="input2" floatPlaceholder="always" name ="ClientSecret" placeholder="Client secret">
+                {{input2}}
+        </div>
+        <div id="error-message" *ngIf="nfRegistryService.showErrorMessage"><p>Please verify the details you have entered</p></div>
+        <div class ="footer" fxLayout="row">
+            <span fxFlex></span>
+            <button [disabled]=""  class="footer-back-button push-left-sm  f-Secondary-button" (click)="BackToUrl()"
+                i18n="Attempting to go previous dialog">
+                Back
+            </button>
+            <button [disabled]="nfRegistryService.enableButtonStatus" class="footer-next-button push-left-sm  f-primary-button" (click)="NavigateToApplicationUsers(umsUrl,clientId,clientSecret)"
+                i18n="Log in|A button for attempting to authenticate with the registry.@@nf-user-login-button">
+                Next
+            </button>
+        </div>
+    </div>
+    <div id="thirdPage" *ngIf="nfRegistryService.enableApplicationUsers" fxLayout="column" fxLayoutAlign="space-between start" class="panels-inner-content-height pad-bottom-md">
+        <div class="pad-bottom-md">
+
+            <div class="third-panel-content">
+             
+                <div fxLayout="row">
+                    <div  class="adminpanel-info text-center">
+                        <p id ="text-content">Please select the <b style="font-weight: bolder;">Admin</b> for Data Integration Registry</p>
+                        <!--<p class="adminuser-info-style">Select Admin</p>-->
+                    </div>
+                 </div>
+               
+               <div fxLayout="row" class="drop-down">
+                <!--  <select class="f-dropdown closed f-drop-title icon-down ddmenu"  [ngModel]="nfRegistryService.usersList" (ngModelChange)="NavigateToLoginPage($event)">
+                      <option *ngFor="let user of nfRegistryService.usersList"  [ngValue]="user">{{user.value}}</option>
+                   </select>  -->
+               <!--  <select [ngModel]="nfRegistryService.usersList" (ngModelChange)="NavigateToLoginPage($event)" name="sel3">
+                     <option [ngValue]="user.value" *ngFor="let user of nfRegistryService.usersList">{{user.value}}</option>
+                 </select> -->
+                  <!--    <mat-select placeholder="Select the user" class="f-dropdown closed f-drop-title icon-down ddmenu">
+                        <mat-option *ngFor="let user of nfRegistryService.usersList" [value]="user.value">
+                            {{user.value}}
+                        </mat-option>
+                </mat-select> -->
+                  <mat-form-field id ="customize-form">
+                      <mat-select  placeholder="Select admin"  
+                               (change)="NavigateToLoginPage($event)" id ="select">
+                          <mat-option class="customized" *ngFor="let user of nfRegistryService.usersList" [value]="user">
+                              {{user.value}}
+                      </mat-option>
+                  </mat-select>
+               </mat-form-field>
+             </div>
+         <div class ="footer" id ="third-footer-position" fxLayout="row">
+            <span fxFlex></span>
+            <button [disabled]="" class="footer-back-button f-Secondary-button push-left-sm" (click)="NavigateToApplicationDetails()"
+                i18n="Attempting to go previous dialog">
+                Back
+            </button>
+            <button [disabled]="nfRegistryService.selectedUserNextBtn"  class="footer-next-button f-primary-button push-left-sm" (click)="UmsLogin()"
+                i18n="Next button is disabled for application users dialog">
+                Next
+            </button>
+        </div>
+    </div>
+     </div>
+</div>
+       <div id="FourthPage"  *ngIf="nfRegistryService.enableLaunchPanel" fxLayout="column" fxLayoutAlign="space-between start" class="panels-inner-content-height pad-bottom-md">
+       
+                <div fxFl   ex="25" id="first-row" style="width: 100%">
+                   <p class="launch-page-content text-center">Restarting Registry Service to enable security.It may take 3-5 mins... </p>
+                    <p class="registration-messagestyle text-center">Secured Registry Service URL</p>
+                </div>
+           <div class="text-center usernameInput pad-bottom-md fill-available-width">
+               <div  id="secure-register-info" class="applicationUrl">
+                   <div id="secure-register-link" class="secure-register-link-alignmentstyle">{{nfRegistryService.applicationUrl}}</div>
+               </div>
+           </div>
+        <div class ="footer" fxLayout="row">
+            
+        </div>
+        <div class ="footer" fxLayout="row">
+            <span fxFlex></span>
+            <button [disabled]="nfRegistryService.enableLaunchPanel" class="footer-back-button f-Secondary-button push-left-sm"
+                i18n="Attempting to go previous dialog">
+                Back
+            </button>
+            <button [disabled]=""  class="footer-next-button f-primary-button push-left-sm" (click)="SecureEnableUrl()"
+                i18n="Log in|A button for attempting to authenticate with the registry.@@nf-user-login-button">
+                Launch
+            </button>
+        </div>
+    </div>    
+
+    <style>
+        .launch-panel-url
+        {
+                margin-top: -85px ! important;
+        }
+        .first-row-content{
+            margin-top: 100px ! important;
+        }
+        #align-button {
+    margin-left: 592px;
+}
+        body[fds] input.mat-input-element:focus{
+            border-color: red;
+        }
+        #text-content {
+            margin-left: 22px;
+        }
+        #error-message {
+            margin-left: 215px;
+            margin-top: -33px;
+            color: red;
+            font-size: 14px;
+            font-family: Segoe UI!important;
+        }
+        mat-form-field#customize-form
+        {
+            width: 100%;
+        }
+        mat-option.customized
+        {
+              height: 35px;
+              line-height: 40px;
+        }
+      mat-option.customized:hover
+        {
+            background-color: #F2F2F2;
+            color: #333;
+        }
+        mat-select#select
+        {
+            border-bottom: 1px solid #e3e3e3;
+            padding-bottom: 6px;
+        }
+        #snackbar {
+            width: 100px;
+            visibility: hidden;
+            margin-top: 35px;
+            margin-left: 67px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 25px;
+            padding: 11px;
+            position: sticky;
+            z-index: 1;
+            font-size: 11px;
+            height: 26px;
+            line-height: 4px;
+        }
+
+        #snackbar.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        button.copy-button:focus
+        {
+            outline:none;
+        }
+        .copy-button
+        {
+            border: none;
+            background: none;
+            margin-left: -44px;
+            font-size: 20px;
+            position: relative;
+            top: -4px;
+            left: 56%;
+            color: #333;
+        }
+        .launch-page-content
+        {
+            font-size: 14px;
+            opacity: .87;
+            font-weight: 500;
+            top: 95px;
+            color: #000;
+            font-family: roboto!important;
+        }
+        #third-footer-position
+        {
+            margin-top: 169px ! important;
+        }
+        #panel-bottom
+        {
+            margin-top: 4px;
+        }
+        .drop-down {
+            height: 31px;
+            width: 300px;
+            margin-left: 217px;
+        }
+        .adminuser-info-style
+        {
+            font-size: 11px;
+            font-weight: bold;
+            top: 90px;
+            color: #299eff;
+            opacity: 1;
+        }
+        .panel-field-header
+        {
+            font-family: roboto!important;
+            font-size: 12px;
+            color: #299eff;
+            opacity: 1;
+            margin-left: 216px;
+        }
+        .adminpanel-info
+        {
+            top: 55px;
+            color: #000;
+            opacity: .87;
+            font-size: 14px;
+            font-family: roboto!important;
+            line-height: 21px;
+            width:100%;
+        }
+        .third-panel-content
+        {
+            margin-top: 102px;
+        }
+        .input-fields
+        {
+            font-family: Segoe UI ! important;
+            font-size: 13px ! important;
+            margin-left: 215px;
+            border-radius: 0px ! important;
+            width: 302px;
+            height: 25px;
+            padding: 9px;
+            border: 1px solid #CFD3D7;
+        }
+        label.mat-input-placeholder.mat-form-field-placeholder
+        {
+            text-align: center;
+            font-family: roboto!important;
+            font-size: 16px ! important;
+            color: #299eff ! important;
+            opacity: 1
+        }
+        .set-width{
+              width: 328px ! important;
+        }
+        .footer {
+          
+            margin-bottom: -58px;
+            margin-left: 460px;
+        }
+        .usernameInput
+        {
+            margin-top: -12px; 
+        } 
+        #first-row {
+            margin-top: 70px;
+        }
+        .panels-inner-content-height {
+           height: 342px;
+        }
+        .applicationdetail-messageone {
+            position: absolute;
+            right: 135px;
+            color: #000;
+            font-size: 14px;
+            font-family: roboto!important;
+            line-height: 21px;
+            font-weight: 500;
+            top: 0;
+        }
+       .applicationdetail-messagetwo {
+           position: absolute;
+           right: 215px;
+           top: 36px;
+           color: #000;
+           font-size: 14px;
+           font-family: roboto!important;
+           line-height: 21px;
+           font-weight: 500;
+       }
+       .registration-headingstyle {
+           font-size: 18px;
+           font-weight: 500;
+           top: 51px;
+           font-family: roboto!important;
+           color: #000;
+           opacity: 0.54;
+       }
+       .registration-headingstyle-panel2
+       {
+           font-size: 14px;
+           font-weight: 500;
+           top: 51px;
+           font-family: roboto!important;
+           color: #000;
+           opacity: .87;
+           margin-left: 36px
+       }
+       .registration-messagestyle-panel2
+       {
+           font-size: 14px;
+           opacity: .87;
+           font-weight: 500;        
+           top: 95px;
+           color: #000;
+           font-family: roboto!important;
+           margin-left:-5px;
+       }
+       .registration-messagestyle {
+           font-size: 14px;
+           opacity: .87;
+           font-weight: 500;        
+           top: 7px;
+           position: relative;
+           color: #000;
+           font-family: roboto!important;
+       }
+      
+        .applicationUrl
+        {
+            border: 1px solid #299eff;
+            width: 261px;
+            height: 41px;
+            opacity: 1;
+            line-height: 1px;
+            color: #299eff;
+            border-radius: 4px;
+            background-color: #f6fbff;
+            padding: 11px;
+            font-size: 15px;
+            position: relative;
+            margin-left: 237px;
+            margin-top: -25px;
+        }
+        .dialog-title 
+        {
+            color: #448dd5 ! important;
+            font-size: 18px ! important;
+            font-style: normal;
+            font-weight: bold;
+            line-height: 56px;
+            padding-left: 20px;
+            font-family: Roboto!important;
+            text-overflow: ellipsis;
+            width:100% ! important;
+        }
+/*        .footer-next-button{
+            background: #448dd5!important;
+            color: #fff!important;
+        }
+        .footer-back-button
+        {
+            background: #fff!important;
+            color: #5c5c5c!important;
+        }*/
+             .f-dropdown {
+            display: block;
+            padding: 13px 16px;
+            width: 266px;
+            margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+            border-left: 4px solid #739cda;
+            background: #fff;
+            font-size: 1.55em;
+            color: #656565;
+            font-weight: normal;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) ! important;
+            transition: all 0.15s linear;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            outline: none;
+            height: 32px ! important;
+            border-radius: 4px;
+            width: 240px;
+            font-family: 'Asap', sans-serif !important;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            line-height: 18px;
+            color: #333333;
+            padding: 2px 8px;
+            box-shadow: none;
+            box-sizing: border-box; 
+        }
+
+        .f-dropdown:hover {
+            color: #333;
+            border: 1px solid #999999;
+        }
+
+        .f-dropdown.closed:before {
+            display: block;
+            content: "\e93f";
+            position: absolute;
+            right: 8px;
+            top: 18px;
+            margin-top: -16px;
+            transform: rotate(0deg);
+            font-family: 'fusion-font-v1';
+            color: #4D4D4D;
+            font-size: 14px;
+            transition: margin-top 0.5s, height 0.5s;
+        }
+
+        .f-dropdown.open:before {
+            display: block;
+            content: "\e93f";
+            position: absolute;
+            right: 8px;
+            top: 18px;
+            margin-top: -16px;
+            transform: rotate(180deg);
+            font-family: 'fusion-font-v1';
+            color: #4D4D4D;
+            font-size: 14px;
+            transition: margin-top 0.9s, height 0.9s;
+        }
+
+        .f-dropdown.open {
+            border-left-color: #6c6d70;
+            border-color: #0565FF;
+            box-shadow: none;
+        }
+
+        .f-dropdown ul {
+            position: absolute;
+            top: 100%;
+            left: -2px;
+            width: 240px;
+            padding: 5px 0px;
+            display: none;
+            background: #fff;
+            box-shadow: 0 6px 14px 3px rgba(0, 0, 0, 0.10);
+            border-radius: 4px;
+            margin-top: 2px !important;
+        }
+
+        .f-dropdown ul li {
+            width: 90%;
+            vertical-align: top;
+            overflow: hidden;
+            cursor: pointer;
+            display: block;
+            padding: 8px 12px 8px 12px;
+            text-decoration: none;
+            font-family: 'Asap', sans-serif;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            line-height: 20px;
+            color: #333;
+        }
+        .f-dropdown ul li a {
+            text-decoration: none;
+            display: block;
+            color: #447dd3;
+            padding: 7px 15px;
+        }
+        .f-dropdown ul li a:hover {
+            color: #6fa0e9;
+            background: #e7f0f7;
+        }
+        .f-dropdown ul li:hover {
+            color: #333;
+            background: #EEEEEE;
+        }
+        .register-link-alignmentstyle{
+                left: 12px;
+                color: #299eff;
+                opacity: 1;
+                position: absolute;
+                font-size: 16px;
+                font-family: roboto!important;
+                font-weight: inherit;
+                width: 204px;
+                line-height: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                top: 11px;
+        }
+         .secure-register-link-alignmentstyle{
+                left: 10px;
+                color: #299eff;
+                opacity: 1;
+                position: absolute;
+                font-size: 16px;
+                font-family: roboto!important;
+                font-weight: inherit;
+                width: 240px;
+                line-height: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                top: 11px;
+        }
+    </style>

@@ -1,0 +1,58 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<div id="nifi-registry-user-login-dialog">
+    <div class="ng-tns-c7-4" id="nifi-registry-user-login-dialog">
+        <div  class="username-password-container">
+            <div class="login-syncfusion-title">Syncfusion</div>
+            <div class="login-dip-title">Data Integration Registry</div>
+            <div>
+                <img class="dip-logo-style" src="/dataintegration-registry/images/DATA INTEGRATION PLATFORM.svg">
+            </div>  
+            <div>
+             <input id="login-username" type="text"  #usernameInput  placeholder="Username" value="admin" autocomplete="off" focused="true" class="login-userinput-box-style">
+            </div>
+            <div>
+             <input id="login-password" #passwordInput type="password"   placeholder="Password" class="login-password-box-style">
+            </div>
+            <span class="login-default-password-text">Default password:</span>
+            <span class="login-admin-text-style">admin</span>
+            <div id="password-error-validation" class="password-validation-style">Please enter valid username and password.</div>
+             <div id="empty-error-validation" class="empty-validation-style">Please enter valid entry.</div>
+            <button id="login-btn" class="push-left-sm login-btn-style" (click)="login(usernameInput, passwordInput)" color="fds-primary"
+                i18n="Log in|A button for attempting to authenticate with the registry.@@nf-user-login-button">
+                Log In
+        </button>
+    </div>
+    <div class="login-footer-div">
+        <div>
+            <div class="login-copyrights-info">Copyright © 2001 - 2018 Syncfusion Inc. All Rights Reserved</div>
+        </div>
+        <div>
+            <div class="login-document-link">
+                <a href="https://help.syncfusion.com/data-integration/overview" target="_blank" class="login-link-styles">Documentation</a>
+            </div>
+            <div class="login-privacy-policy-link">
+                <a href="https://www.syncfusion.com/privacy" target="_blank" class="login-link-styles">Privacy Policy</a>
+            </div>
+            <div class="login-terms-link">
+                <a href="https://www.syncfusion.com/terms-of-use" target="_blank" class="login-link-styles">Terms of Use</a></div>
+        </div>
+    </div>
+</div>
+</div>
+<router-outlet></router-outlet>

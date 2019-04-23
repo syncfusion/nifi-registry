@@ -1,0 +1,49 @@
+* {
+  font-family: 'Asap', sans-serif;
+}
+
+@font-face {
+  font-family: 'Asap';
+  font-weight:  bold;
+  src: url("Asapfont/Asap-Bold.ttf");
+}   
+@font-face {
+  font-family: 'Asap';
+  font-weight: bold;
+  font-style: italic;
+  src: url("Asapfont/Asap-BoldItalic.ttf");
+}
+@font-face {
+  font-family: 'Asap';
+  font-style: italic;
+  src: url("Asapfont/Asap-Italic.ttf");
+}
+@font-face {
+  font-family: 'Asap';
+  font-weight: 500;
+  src: url("Asapfont/Asap-Medium.ttf");
+}
+@font-face {
+  font-family: 'Asap';
+  font-style:  italic;
+  font-weight:  500;
+  src: url("Asapfont/Asap-MediumItalic.ttf");
+}
+@font-face {
+  font-family: 'Asap';
+  font-style: normal;
+  src: url("Asapfont/Asap-Regular.ttf");
+}
+@font-face {
+  font-family: 'Asap';
+  font-weight: 600;
+  src: url("Asapfont/Asap-SemiBold.ttf");
+}
+@font-face {
+  font-family: 'Asap';
+  font-style: italic;
+  font-weight: 600;
+  src: url("Asapfont/Asap-SemiBoldItalic.ttf");
+}
+
+

@@ -1,0 +1,117 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<div fxFill>
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="pad-top-sm pad-bottom-md pad-left-md pad-right-md">
+        <span class="bucket-title-style">{{nfRegistryService.bucket.name}}</span>
+        <button mat-icon-button (click)="closeSideNav()">
+            <mat-icon color="primary">close</mat-icon>
+            <a href="nf-registry-manage-bucket.html"></a>
+        </button>
+    </div>
+    <div class="sidenav-content-permissions-container style-1">
+       <mat-button-toggle-group name="nifi-registry-user-perspective" fxLayout="row"
+                                 fxLayoutAlign="space-between center" class="tab-toggle-group permission-users-groups-toggle-button">
+         <mat-button-toggle
+                [matTooltip]="'Manage NiFi Registry Users.'"
+                [checked]="nfRegistryService.userGroupPermissionTab === 'user'" value="user"
+                class="uppercase users-permission-toggle-button add-permissions-tabs-style"
+                (change)="navigateToUserGroupPolicyPerspective($event)"
+                i18n="Workflow administration tab|A description of the type of administration options available.@@nf-admin-workflow-tab-title">
+                User
+        </mat-button-toggle>
+        <mat-button-toggle
+            [matTooltip]="'Manage NiFi Registry groups.'"
+            [checked]="nfRegistryService.userGroupPermissionTab === 'group'" value="group"
+            class="uppercase groups-toggle-button add-permissions-tabs-style"
+            (change)="navigateToUserGroupPolicyPerspective($event)"
+            i18n="Workflow administration tab|A description of the type of administration options available.@@nf-admin-workflow-tab-title">
+            Groups
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+        <div id="nifi-registry-users-administration-list-container-column-header" class="td-data-table">
+            <div class="td-data-table-column users-groups-header-style" (click)="sortUserAndGroups(column)"
+                 *ngFor="let column of nfRegistryService.userGroupsColumns"
+                 fxFlex="{{column.width}}">
+                {{column.label}}
+                <i *ngIf="column.active && column.sortable && column.sortOrder === 'ASC'" class="fa fa-caret-up"
+                   aria-hidden="true"></i>
+                <i *ngIf="column.active && column.sortable && column.sortOrder === 'DESC'" class="fa fa-caret-down"
+                   aria-hidden="true"></i>
+            </div>
+            <div class="td-data-table-column"></div>
+        </div>
+        <div id="nifi-registry-add-selected-users-to-group-list-container" class="permission-user-group-section">
+          <div class="add-user-permission-section" *ngIf="isUserSelected" >
+           <div [ngClass]="{'selected' : row.checked}" *ngFor="let row of filteredUsers"
+                 (click)="userOrGroup = row; userOrGroup.type = 'user';">
+                <div *ngFor="let column of nfRegistryService.userGroupsColumns" fxLayout="row"
+                     fxLayoutAlign="space-between center" class="td-data-table-row">
+                     <div class="td-data-table-cell user-groups-checkbox-styles">
+                         <mat-radio-group>
+                             <mat-radio-button value="row[column.name]" [checked]="row[column.name] === userOrGroup.identity" (change)="userOrGroup = row; userOrGroup.type = 'user';">{{column.format ? column.format(row[column.name]) : row[column.name]}}</mat-radio-button>
+                         </mat-radio-group>
+<!--                        <mat-checkbox [checked]="row[column.name] === userOrGroup.identity"
+                                      (click)="userOrGroup = row; userOrGroup.type = 'user';"> 
+                        <span class="user-group-description">{{column.format ? column.format(row[column.name]) : row[column.name]}}</span>      
+                        </mat-checkbox>-->
+                    </div>                
+                </div>
+            </div>
+            </div>
+            <div class="add-group-permission-section" *ngIf="isGroupSelected">
+            <div [ngClass]="{'selected' : row.checked}" *ngFor="let row of filteredUserGroups"
+                 (click)="userOrGroup = row; userOrGroup.type = 'group';">
+                <div *ngFor="let column of nfRegistryService.userGroupsColumns" fxLayout="row"
+                     fxLayoutAlign="space-between center" class="td-data-table-row">
+                     <div class="td-data-table-cell">
+<!--                        <mat-checkbox [checked]="row[column.name] === userOrGroup.identity"
+                                      (click)="userOrGroup = row; userOrGroup.type = 'group';">
+               <span class="user-group-description">{{column.format ? column.format(row[column.name]) : row[column.name]}}</span>      
+                        </mat-checkbox>-->
+                          <mat-radio-group>
+                             <mat-radio-button value="row[column.name]" [checked]="row[column.name] === userOrGroup.identity" (change)="userOrGroup = row; userOrGroup.type = 'user';">{{column.format ? column.format(row[column.name]) : row[column.name]}}</mat-radio-button>
+                         </mat-radio-group>
+                    </div>
+                </div>
+            </div>
+           </div>
+        </div>
+    </div>
+   <div class="permissions-checkbox-container">
+        <mat-checkbox class="bucket-checkbox-alignments-center-style" [(checked)]="readCheckbox.checked && writeCheckbox.checked && deleteCheckbox.checked" (change)="toggleAllPermissions($event)">
+            <span class="description buckets-permission-checkboxes-descrip-styles">All</span>
+        </mat-checkbox>
+        <mat-checkbox [(checked)]="readCheckbox.checked" #readCheckbox class="pad-left-md bucket-checkbox-alignments-center-style">
+            <span class="description buckets-permission-checkboxes-descrip-styles">Read</span>
+        </mat-checkbox>
+        <mat-checkbox  [(checked)]="writeCheckbox.checked" #writeCheckbox class="pad-left-md bucket-checkbox-alignments-center-style">
+            <span class="description buckets-permission-checkboxes-descrip-styles">Write</span>
+        </mat-checkbox>
+        <mat-checkbox [(checked)]="deleteCheckbox.checked" #deleteCheckbox class="pad-left-md bucket-checkbox-alignments-center-style">
+            <span class="description buckets-permission-checkboxes-descrip-styles">Delete</span>
+        </mat-checkbox>
+    </div>
+     <div class="bucket-permission-footer">
+         <button (click)="closeSideNav()" class="f-Secondary-button side-nav-footer-buttons-styles" i18n="Cancel creation of new bucket policy|A button for cancelling the creation of a new bucket policy in the registry.@@nf-admin-workflow-cancel-bucket-policy-creation-button">
+             Cancel
+         </button>
+         <button [disabled]="(!this.userOrGroup.identity || !this.readCheckbox.checked && !this.writeCheckbox.checked && !this.deleteCheckbox.checked)" (click)="savePolicy()" class="f-primary-button"  i18n="Apply new bucket policy button|A button for applying a new bucket policy in the registry.@@nf-admin-workflow-apply-policy-to-bucket-button">
+             Apply
+         </button>
+    </div>
+</div>

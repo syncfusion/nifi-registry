@@ -66,8 +66,6 @@
                 <exclude>nifi-registry-bootstrap</exclude>
                 <exclude>nifi-registry-utils</exclude>
                 <exclude>nifi-registry-docs</exclude>
-                <exclude>nifi-registry-ranger-assembly</exclude>
-                <exclude>nifi-registry-aws-assembly</exclude>
             </excludes>
         </dependencySet>
         
@@ -155,13 +153,5 @@
             <filtered>true</filtered>
         </file>
     </files>
-
-    <fileSets>
-        <fileSet>
-            <!-- Extensions are extracted by maven-dependency-plugin defined in pom.xml -->
-            <directory>${project.build.directory}/ext</directory>
-            <outputDirectory>ext</outputDirectory>
-        </fileSet>
-    </fileSets>
 
 </assembly>

@@ -1,0 +1,27 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Apr 17, 2018, 10:27:28 AM
+    Author     : sangavi.eswaramoorth
+*/
+
+body[fds] input.mat-input-element, body[fds] textarea.mat-input-element {
+  height: 25px!important;
+}
+.mat-form-field-infix{
+    display: block;
+    position: relative;
+    flex: auto;
+    min-width: 0;
+    padding-top: 20px!important;  
+}
+body[fds] .mat-form-field-can-float.mat-form-field-should-float .mat-form-field-placeholder {
+  font-size: 18px;
+  color:#333333;
+}
+.create-bucket-button{
+ margin-top: 7px !important;
+}

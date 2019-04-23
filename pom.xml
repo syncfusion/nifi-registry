@@ -24,16 +24,33 @@
     </parent>
     <groupId>org.apache.nifi.registry</groupId>
     <artifactId>nifi-registry</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
     <description>Provides a central location for storage and management of shared resources across one or more instances
         of NiFi and/or MiNiFi.
     </description>
     <modules>
-        <module>nifi-registry-core</module>
-        <module>nifi-registry-extensions</module>
+        <module>nifi-registry-properties</module>
+        <module>nifi-registry-utils</module>
+        <module>nifi-registry-data-model</module>
+        <module>nifi-registry-flow-diff</module>
+        <module>nifi-registry-jetty</module>
+        <module>nifi-registry-resources</module>
+        <module>nifi-registry-runtime</module>
+        <module>nifi-registry-security-api</module>
+        <module>nifi-registry-security-utils</module>
+	    <module>nifi-registry-framework</module>
+        <module>nifi-registry-provider-api</module>
+        <module>nifi-registry-web-api</module>
+        <module>dataintegration-registry-web-ui</module>
+        <module>nifi-registry-web-docs</module>
+        <module>nifi-registry-web-error</module>
+        <module>nifi-registry-bootstrap</module>
+        <module>nifi-registry-docs</module>
+        <module>nifi-registry-db-provider</module>
+        <module>nifi-registry-syncfusion-provider</module>
         <module>nifi-registry-assembly</module>
-        <module>nifi-registry-toolkit</module>
+		<module>nifi-registry-client</module>
     </modules>
     <url>https://nifi.apache.org/registry.html</url>
     <organization>
@@ -76,7 +93,7 @@
         <connection>scm:git:git://git.apache.org/nifi-registry.git</connection>
         <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/nifi-registry.git</developerConnection>
         <url>https://git-wip-us.apache.org/repos/asf?p=nifi-registry.git</url>
-        <tag>HEAD</tag>
+        <tag>nifi-registry-0.1.0-RC1</tag>
     </scm>
     <issueManagement>
         <system>JIRA</system>
@@ -91,15 +108,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <inceptionYear>2017</inceptionYear>
         <org.slf4j.version>1.7.12</org.slf4j.version>
-        <jetty.version>9.4.11.v20180605</jetty.version>
+        <jetty.version>9.4.3.v20170317</jetty.version>
         <jax.rs.api.version>2.1</jax.rs.api.version>
-        <jersey.version>2.27</jersey.version>
-        <jackson.version>2.9.8</jackson.version>
-        <spring.boot.version>2.1.3.RELEASE</spring.boot.version>
-        <spring.security.version>5.1.3.RELEASE</spring.security.version>
-        <flyway.version>5.2.1</flyway.version>
-        <flyway.tests.version>5.1.0</flyway.tests.version>
-        <swagger.ui.version>3.12.0</swagger.ui.version>
+        <jersey.version>2.26</jersey.version>
+        <jackson.version>2.9.2</jackson.version>
+        <spring.boot.version>2.0.0.M7</spring.boot.version>
+        <spring.security.version>5.0.0.RELEASE</spring.security.version>
+        <flyway.version>4.2.0</flyway.version>
     </properties>
 
     <repositories>
@@ -137,23 +152,21 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jcenter-releases</id>
-            <name>jcenter</name>
-            <url>http://jcenter.bintray.com</url>
+        <repository>
+            <id>spring-milestones</id>
+            <url>http://repo.spring.io/milestone</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
 
     <dependencyManagement>
         <dependencies>
-            <!-- Logging dependencies that will be directly in lib -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
@@ -190,59 +203,157 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${org.slf4j.version}</version>
             </dependency>
-	    <!-- lib/shared -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-webapp</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlets</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-annotations</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>apache-jsp</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>apache-jstl</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${jax.rs.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>2.0.0.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>6.0.2.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.el</artifactId>
+                <version>3.0.1-b08</version>
+            </dependency>
+            <!-- Spring Boot 2.0 Requires Jackson 2.9.x -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.5</version>
             </dependency>
-	    <!-- NiFi Registry Modules -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>1.5.16</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.nifi.registry</groupId>
                 <artifactId>nifi-registry-utils</artifactId>
-                <version>0.4.0-SNAPSHOT</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.nifi.registry</groupId>
                 <artifactId>nifi-registry-bootstrap</artifactId>
-                <version>0.4.0-SNAPSHOT</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.nifi.registry</groupId>
                 <artifactId>nifi-registry-runtime</artifactId>
-                <version>0.4.0-SNAPSHOT</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.nifi.registry</groupId>
                 <artifactId>nifi-registry-security-api</artifactId>
-                <version>0.4.0-SNAPSHOT</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.nifi.registry</groupId>
                 <artifactId>nifi-registry-provider-api</artifactId>
-                <version>0.4.0-SNAPSHOT</version>
+                <version>0.1.0</version>
+            </dependency>
+			<dependency>
+                <groupId>org.apache.nifi.registry</groupId>
+                <artifactId>nifi-registry-syncfusion-provider</artifactId>
+                <version>0.1.0</version>
+            </dependency>
+			<dependency>
+                <groupId>org.apache.nifi.registry</groupId>
+                <artifactId>nifi-registry-db-provider</artifactId>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.nifi.registry</groupId>
-                <artifactId>nifi-registry-web-ui</artifactId>
+                <artifactId>dataintegration-registry-web-ui</artifactId>
                 <type>war</type>
-                <version>0.4.0-SNAPSHOT</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.nifi.registry</groupId>
                 <artifactId>nifi-registry-web-api</artifactId>
                 <type>war</type>
-                <version>0.4.0-SNAPSHOT</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.nifi.registry</groupId>
                 <artifactId>nifi-registry-resources</artifactId>
-                <version>0.4.0-SNAPSHOT</version>
+                <version>0.1.0</version>
                 <classifier>resources</classifier>
                 <scope>runtime</scope>
                 <type>zip</type>
             </dependency>
-	    <!-- Test dependencies -->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
@@ -597,11 +708,7 @@
                         <exclude>.github/PULL_REQUEST_TEMPLATE.md
                         </exclude> <!-- PR Template for GitHub that does not have a mechanism of including comments -->
                         <exclude>**/resources/banner.txt
-                        </exclude> <!-- Console banner text that does not have a mechanism of including comments -->
-                        <exclude>src/main/resources/swagger/security-definitions.json
-                        </exclude> <!-- A maven-swagger-plugin input file that does not have a mechanism of including comments -->
-			            <exclude>.travis-output-filters</exclude> <!-- grep patterns to exclude from travis output -->
-                        <exclude>src/test/resources/descriptors/*</exclude>
+                        </exclude><!-- Console banner text that does not have a mechanism of including comments -->
                     </excludes>
                 </configuration>
                 <dependencies>
@@ -703,7 +810,7 @@
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
                             <configuration>
-                                <doclint>none</doclint>
+                                <additionalparam>-Xdoclint:none</additionalparam>
                             </configuration>
                         </plugin>
                     </plugins>

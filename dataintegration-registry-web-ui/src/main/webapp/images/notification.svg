@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.2 (51160) - http://www.bohemiancoding.com/sketch -->
+    <title>notification</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="87.8645833%" y1="16.3346354%" x2="16.1979167%" y2="84.3294271%" id="linearGradient-1">
+            <stop stop-color="#555B7A" offset="0%"></stop>
+            <stop stop-color="#495071" offset="26.3492506%"></stop>
+            <stop stop-color="#394165" offset="52.8858418%"></stop>
+            <stop stop-color="#262F55" offset="76.5545281%"></stop>
+            <stop stop-color="#161F49" offset="100%"></stop>
+        </linearGradient>
+        <filter x="-125.9%" y="-93.8%" width="364.3%" height="364.3%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="1" dy="7" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="7" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="66.7382812%" y1="14.3229167%" x2="26.3020833%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#FCFEFA" offset="0%"></stop>
+            <stop stop-color="#DEDFE5" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="notification" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Components-/-Z-Symbols-/-Icons-/-Large-/-Notification">
+            <circle id="BG" fill="url(#linearGradient-1)" cx="16" cy="16" r="16"></circle>
+            <g id="notification" filter="url(#filter-2)" stroke-width="1" transform="translate(6.933333, 6.933333)" fill="url(#linearGradient-3)">
+                <path d="M9.33333333,18.6666667 C4.17867567,18.6666667 0,14.487991 0,9.33333333 C0,4.17867567 4.17867567,0 9.33333333,0 C14.487991,0 18.6666667,4.17867567 18.6666667,9.33333333 C18.6666667,14.487991 14.487991,18.6666667 9.33333333,18.6666667 Z M14.3659529,12.9680365 L13.5417682,11.587011 C13.1611208,10.9495851 12.9599854,10.2194891 12.9599854,9.47638718 L12.9599854,8.26665536 C12.9599854,6.73942067 11.9461858,5.44767236 10.559884,5.03123401 L10.559884,4.16508475 C10.559884,3.63283713 10.1293072,3.2 9.59983896,3.2 C9.07037075,3.2 8.63979391,3.63283713 8.63979391,4.16508475 L8.63979391,5.03123401 C7.25351468,5.44767236 6.23971502,6.73942067 6.23971502,8.26665536 L6.23971502,9.47638718 C6.23971502,10.2194891 6.03857965,10.9490875 5.65840478,11.586536 L4.83422004,12.9675615 C4.78957829,13.0423626 4.78861075,13.13501 4.83133992,13.210761 C4.87406909,13.286512 4.95327219,13.3333333 5.03967557,13.3333333 L14.1600249,13.3333333 C14.2464282,13.3333333 14.3261039,13.2865346 14.368833,13.2112586 C14.4115622,13.13596 14.4101221,13.0423399 14.3659529,12.9680365 Z M8,13.8666667 C8.28656788,14.8090718 8.89323816,15.4666667 9.59998809,15.4666667 C10.306738,15.4666667 10.9134321,14.8090718 11.2,13.8666667 L8,13.8666667 Z" id="Combined-Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

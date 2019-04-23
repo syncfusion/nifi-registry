@@ -1,0 +1,312 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<div id="nifi-registry-workflow-administration-buckets-list-container" *ngIf="nfRegistryService.filteredBuckets.length > 0 || nfRegistryService.isbucketFiltered">
+    <div class="search-bucket-container"> 
+    <input type="text" class="search-textbox" id="SearchBuckets" placeholder="Find buckets" (keyup)="nfRegistryService.searchBuckets();isFilteredBuckets = true">
+    <span  *ngIf="!isFilteredBuckets" class="icon-search search-icon"></span>
+    <span  *ngIf="isFilteredBuckets" (click)="nfRegistryService.searchBucketsCloseBtn();isFilteredBuckets = false" class="icon-x search-icon"></span>
+    <button class="f-primary-with-icon-button plus-button-policy-align" ng-disabled="!nfRegistryService.currentUser.resourcePermissions.buckets.canWrite" (click)="createBucket()">
+    <span class="f-primary-with-icons icon-plus" (click)="createBucket()"></span></button>
+<!--    <div class="icon-sort bucket-funnel-icon" (click)="nfRegistryService.sortBuckets(column)"
+        *ngFor="let column of nfRegistryService.bucketColumns"
+                 fxFlex="{{column.width}}">
+                <i *ngIf="column.active && column.sortable && column.sortOrder === 'ASC'"
+                   aria-hidden="true"></i>
+                <i *ngIf="column.active && column.sortable && column.sortOrder === 'DESC'"
+                   aria-hidden="true"></i>
+    </div>-->
+    </div>
+    <div id="registry-buckets-containers" class="style-1">
+            <div class="td-data-table-row bucket-row-details"
+                 [ngClass]="{'nonconfigurable' : row.configurable === false, 'selected-nonconfigurable' : (row.checked === true && row.configurable === false), 'selected' : (row.checked === true || row.name === nfRegistryService._bucketname),'hovered':row.hovered === true}"
+                 *ngFor="let row of nfRegistryService.filteredBuckets"
+                 (click)="row.checked = !row.checked;allFilteredBucketsSelected(row)"  (mouseenter)="row.hovered=true" (mouseleave)= "!row.hovered=false">
+                 
+                <div class="td-data-table-cell bucket-column-main-container" *ngFor="let column of nfRegistryService.bucketColumns" (click)='showDroplets(row)'>
+                    <div class="bucket-column-container">
+                    <div class="ellipsis bucket-column">
+                        <span class="bucket-text-style">{{column.format ? column.format(row[column.name]) : row[column.name]}}
+                        </span>              
+                    </div>
+                    </div>
+                     <span class="icon-menu-meatball-fill menu-container" [matMenuTriggerFor]="bucketActionMenu">
+                     </span>
+                    <mat-menu #bucketActionMenu="matMenu" class="bucket-operations-popup">
+                     <button class="refresh-btn-align"  mat-menu-item (click)="refreshDroplets()">
+                            <span class="icon-refresh-cw"><p class="refresh-text-align">Refresh</p></span>
+                     </button>
+                     <button class="rename-btn-align" mat-menu-item (click)="renameBucket(row)">
+                        <span class="icon-edit-1">
+                             <p class="rename-text-align">Rename</p></span>
+                        </button>
+                        <button class="permission-btn-align" mat-menu-item *ngIf="!nfRegistryService.currentUser.anonymous && nfRegistryService.currentUser.identity !== 'admin'" (click)="manageBucketPermissions(row)">
+                         <span class="icon-lock"><p class="permission-text-align">Permissions</p></span>
+                        </button>
+                        <button class="delete-btn-align"  mat-menu-item (click)="executeDeleteAction('bucket',row)">
+                            <span class="icon-trash-empty"><p class="delete-text-align">Delete</p></span>
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        <div class="filtered-empty-container" *ngIf="nfRegistryService.isbucketFiltered && nfRegistryService.filteredBuckets.length === 0 && !nfRegistryService.inProgress">
+            No results found
+        </div>
+    </div>
+        </div>
+<div id="nifi-registry-explorer-grid-list-viewer-droplet-container"
+     *ngIf="isDroplets && nfRegistryService.filteredBuckets.length > 0">
+    <div class="droplet-section style-1" *ngIf="nfRegistryService.filteredDroplets.length > 0">
+                <div class="td-data-table-row row-bucket-permission"
+                 [ngClass]="{'selected' : droplet.checked === true || droplet.name === nfRegistryService._dropletname,'hovered' : droplet.hovered === true}"
+                 *ngFor="let droplet of nfRegistryService.filteredDroplets"
+                 (click)="droplet.checked = !droplet.checked;allFilteredDropletSelected(droplet)" (mouseenter)="droplet.hovered=true" (mouseleave)= "!droplet.hovered=false">
+                <div class="td-data-table-cell flow-column-main-container">
+                    <div class="flow-container" (click)="showDropletDetails(droplet)">
+                    <div class="ellipsis flow-column-container">
+                        {{droplet.name}}
+                    </div>
+                    </div>
+                    <span class="icon-menu-meatball-fill menu-container droplet-menu" [matMenuTriggerFor]="DropletTableActionMenu">
+                    </span>
+                    <mat-menu #DropletTableActionMenu="matMenu">
+                        <button mat-menu-item  [disabled]="!droplet.permissions.canDelete" (click)="executeDeleteAction('droplet', droplet)">
+                             <span class="icon-trash-empty"><p class="delete-text-align">Delete</p></span>
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+</div>
+    <!-- No Droplets illustration show SECTION-->
+<div class="empty-flow-container" *ngIf="nfRegistryService.filteredDroplets.length === 0">
+    <div class="empty-droplets-illustration"></div>
+    <p class="text-center no-flow-text-align">No flows available</p>
+</div>
+</div>
+<div class="nifi-registry-droplet-details" *ngIf="isDropletDetails">
+    <div class="droplet-details-header" *ngFor="let droplet of nfRegistryService.selectedDroplet">
+                <div fxLayout="row" fxLayoutAlign="space-between start">
+                    <span class="capitalize droplet-name" >{{droplet.name}}</span>
+                    <span id="droplets-vesion-count" class="droplet-version-details" title="{{droplet.versionCount}}">Versions: {{droplet.versionCount}}</span>
+                    <div class="refresh-buckets-container" (click)="refreshDroplets()">
+                    <span class="icon-refresh-cw flow-refresh-icon"></span>
+                    <span class="droplet-refresh-button">Refresh</span> 
+                    </div>
+                </div>
+         <div fxLayout="row" fxLayoutAlign="space-between center" class="description-section">
+                    <div class="" fxLayout="column" fxLayoutAlign="space-between start" class="description-child-container style-1">
+                         <p *ngIf="droplet.description" class="droplet-name-design">{{droplet.description}}</p>
+                    </div>
+                </div>
+ <div id="nifi-registry-explorer-grid-list-viewer-droplet-container-details-change-log" class="style-1">
+                            <td-steps mode="vertical">
+                                <td-step class="version-flow-styles" label="Version {{snapshotMeta.version}}" sublabel="{{snapshotMeta.author}}" sublabel="{{snapshotMeta.timestamp | amTimeAgo}}" 
+                                         *ngFor="let snapshotMeta of droplet.snapshotMetadata; let i = index"
+                                         [active]="i === 0 ? true : false">
+                                    <div fxLayout="column" fxLayoutAlign="space-between stretch">
+                                        <div *ngIf="snapshotMeta.comments" fxLayout="row" class="md-body-2 flow-comments-styles">
+                                            {{snapshotMeta.comments}}
+                                        </div>
+                                        <div *ngIf="!snapshotMeta.comments" fxLayout="row" class="md-body-2 flow-comments-styles">
+                                            No comments specified
+                                        </div>
+                                    </div>
+                                </td-step>
+                            </td-steps>
+  </div>
+        <div class="pad-bottom-sm"></div>
+    </div>
+</div>
+<div class="empty-buckets-container pad-right-xxl" *ngIf="nfRegistryService.filteredBuckets.length === 0 && !nfRegistryService.inProgress && !nfRegistryService.isbucketFiltered">
+    <div class="empty-bucket-illustration"></div>
+    <p class="text-center create-fist-bucket-content">Create your first Bucket!</p>
+    <button class="create-bucket button-center" ng-disabled="!nfRegistryService.currentUser.resourcePermissions.buckets.canWrite"
+                    (click)="createBucket()">
+                Create Bucket
+            </button>
+</div>
+<div id="nifi-registry-manage-buckets-container" 
+     *ngIf="isManagePermission" >
+           <div *ngIf="!nfRegistryService.currentUser.anonymous || nfRegistryService.currentUser.resourcePermissions.policies.canRead" class="pad-top-md pad-bottom-sm pad-right-md">
+               
+            <div class="bucket-permission-header-section">
+                   <span class="icon-arrow-left back-icon-align" (click)="closePermissionTab()"></span>
+                   <span class="bucket-permission-name-alignments">{{nfRegistryService.bucket.name}}</span>
+                   <div class="bucket-permission-actions">
+                       <div class="add-permission-container" [ngClass]="{ 'disabled': nfRegistryService.currentUser.resourcePermissions.policies.canWrite }" *ngFor="let action of nfRegistryService.bucketPolicyActions" (click)="addBucketPolicies(action, nfRegistryService.bucket.identifier)" (click)="nfRegistryService.sidenav.toggle()">
+                       <span class="icon-plus-square create-permission-btn-align"></span>
+                       <button class="add-permission-button" 
+                               [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                           Add Permissions
+                       </button>
+                       </div>
+                       <div class="search-user-group-policy-container"> 
+                           <input type="text" id="permission-search-box" class="search-user-policies-textbox" placeholder="Find user/groups permissions" (keyup)="searchBucketPolicies();isFiltered = true">
+                           <span *ngIf="!isFiltered" class="icon-search bucket-policy-search-icon"></span>
+                           <span *ngIf="isFiltered" (click)="searchCloseBtn();isFiltered = false" class="icon-x bucket-policy-search-icon" id="bucket-policy-close-icon"></span>
+                       </div>
+                   </div>
+            </div>
+
+              <!-- Bucket Permission Section -->
+              
+            <div id="nifi-registry-manage-bucket-list-container">
+                  <div class="bucket-permission-main-container style-1">
+                <div class="bucket-permissions-header" *ngIf="nfRegistryService.filteredGroupPermsData.length > 0 || nfRegistryService.filteredUserPermsData.length>0">  
+                 <div class="td-data-table-column name-header-text-alignments" (click)="sortUsers(column)"
+                     *ngFor="let column of nfRegistryService.bucketPoliciesColumns"
+                     fxFlex="{{column.width}}">
+                    {{column.label}}
+                    <i *ngIf="column.active && column.sortable && column.sortOrder === 'ASC'" class="fa fa-caret-up"
+                       aria-hidden="true"></i>
+                    <i *ngIf="column.active && column.sortable && column.sortOrder === 'DESC'" class="fa fa-caret-down"
+                       aria-hidden="true"></i>
+                </div>
+                </div>  
+                  <div fxLayout="row" class="td-data-table-row bucket-permission-details"
+                   *ngFor="let row of nfRegistryService.filteredGroupPermsData" (click)="userOrGroup = row; userOrGroup.type = 'group';">
+                    <div class="row-bucket-permission" [ngClass]="(row.isEdited=='true')?'edited-row':'non-edited-row'">
+                    <div class="td-data-table-cell" *ngFor="let column of nfRegistryService.bucketPoliciesColumns"
+                         fxFlex="{{column.width}}">
+                   <div>
+                        <div class="ellipsis user-group-name-styles"  *ngIf="column.name == 'identity'||column.name == 'type'">
+                            {{column.format ? column.format(row[column.name]) : row[column.name]}}
+                        </div>
+                         <div class="ellipsis user-group-name-styles"  *ngIf="column.name == 'permissions'">
+                             <div class="permission-section">
+                                     <mat-checkbox [(ngModel)]="isRead" #readCheckbox class="permission-checkbox">
+                                         <span class="description permission-edited-text">Read</span>
+                                     </mat-checkbox>
+                                 <div class='permission-text' *ngIf="row[column.name].indexOf('read')!==-1">Read</div>
+                              </div>
+                             <div class="permission-section"> 
+                                <mat-checkbox [(ngModel)]="isWrite" #writeCheckbox class=" permission-checkbox">
+                                         <span class="description permission-edited-text">Write</span>
+                                </mat-checkbox>  
+                                  <div class='permission-text' *ngIf="row[column.name].indexOf('write')!==-1">Write</div>
+                             </div>
+                             <div class="permission-section">
+                               <mat-checkbox [(ngModel)]="isDelete" #deleteCheckbox class="permission-checkbox">
+                                         <span class="description permission-edited-text">Delete</span>
+                               </mat-checkbox>
+                                 <div class='permission-text' *ngIf="row[column.name].indexOf('delete')!==-1">Delete</div>
+                             </div>     
+                             </div>
+                        </div>
+                </div>
+                    <div class="td-data-table-cell policy-edit-delete-operation" *ngIf="row.isEdited != 'true'" >
+                       <button (click)="openEditPolicy(row);row.checked = !row.checked;"
+                                title="Edit user policies of this bucket" 
+                                class="edit-user-policies-icon-aligns"
+                                [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                           <span class="icon-edit-1 edit-delete-icons-styles"></span>
+                        </button>
+                        <button (click)="removePolicyFromBucket(row);row.checked = !row.checked;"
+                                title="Remove user policies from this bucket" 
+                                class="remove-user-policies-icon-aligns"
+                                [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                          <span class="icon-trash-empty edit-delete-icons-styles"></span>
+                        </button>
+                    </div>
+                     <div class="td-data-table-cell policy-save-operation" *ngIf="row.isEdited == 'true'">
+                         <button (click)="saveEditedPolicy(row);row.checked = !row.checked;"
+                                title="Edit user policies of this bucket" mat-icon-button color="accent"
+								class="edit-user-policies-check-icon-style"
+                                [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                            <span class="icon-check edit-delete-icons-styles"></span>
+                        </button>
+                        <button (click)="closeEditPolicy(row);row.checked = !row.checked;"
+                                title="Remove user policies from this bucket" mat-icon-button color="accent"
+								class="edit-user-policies-check-icon-style"
+                                [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                              <span class="icon-x edit-delete-icons-styles"></span>
+                        </button>
+                    </div>
+                   </div>
+                  </div>
+                <div fxLayout="row" class="td-data-table-row bucket-permission-details"
+                     *ngFor="let row of nfRegistryService.filteredUserPermsData" (click)="userOrGroup = row; userOrGroup.type = 'user';">
+                     <div class="row-bucket-permission" [ngClass]="(row.isEdited=='true')?'edited-row':'non-edited-row'">
+                        <div class="td-data-table-cell permission-container" *ngFor="let column of nfRegistryService.bucketPoliciesColumns"
+                             fxFlex="{{column.width}}">
+                             <div>
+                                <div class="ellipsis user-group-name-styles"  *ngIf="column.name == 'identity'||column.name == 'type'">
+                                    {{column.format ? column.format(row[column.name]) : row[column.name]}}
+                                </div>
+                                <div class="ellipsis user-group-name-styles"  *ngIf="column.name == 'permissions'">
+                                    <div class="permission-section">
+                                        <mat-checkbox [(ngModel)]="isRead" #readCheckbox class="permission-checkbox">
+                                            <span class="description permission-edited-text">Read</span>
+                                        </mat-checkbox>
+                                        <div class='permission-text' *ngIf="row[column.name].indexOf('read')!==-1">Read</div>
+                                    </div>
+                                    <div class="permission-section"> 
+                                        <mat-checkbox [(ngModel)]="isWrite" #writeCheckbox class=" permission-checkbox">
+                                            <span class="description permission-edited-text">Write</span>
+                                        </mat-checkbox>  
+                                        <div class='permission-text' *ngIf="row[column.name].indexOf('write')!==-1">Write</div>
+                                    </div>
+                                    <div class="permission-section">
+                                        <mat-checkbox [(ngModel)]="isDelete" #deleteCheckbox class="permission-checkbox">
+                                            <span class="description permission-edited-text">Delete</span>
+                                        </mat-checkbox>
+                                        <div class='permission-text' *ngIf="row[column.name].indexOf('delete')!==-1">Delete</div>
+                                    </div>     
+                                </div>
+                            </div>
+                        </div>
+                        <div class="td-data-table-cell policy-edit-delete-operation" *ngIf="row.isEdited != 'true'" >
+                            <button (click)="openEditPolicy(row);row.checked = !row.checked;"
+                                title="Edit user policies of this bucket" 
+                                class="edit-user-policies-icon-aligns"
+                                [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                                <span class="icon-edit-1 edit-delete-icons-styles"></span>
+                            </button>
+                            <button (click)="removePolicyFromBucket(row);row.checked = !row.checked;"
+                                title="Remove user policies from this bucket" 
+                                class="remove-user-policies-icon-aligns"
+                                [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                                <span class="icon-trash-empty edit-delete-icons-styles"></span>
+                            </button>
+                        </div>
+                        <div class="td-data-table-cell policy-save-operation" *ngIf="row.isEdited == 'true'">
+                            <button (click)="saveEditedPolicy(row);row.checked = !row.checked;"
+                                title="Edit user policies omatTof this bucket"
+                                class="edit-user-policies-check-icon-style"
+                                [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                                <span class="icon-check edit-delete-icons-styles"></span>
+                            </button>
+                            <button (click)="closeEditPolicy(row);row.checked = !row.checked;"
+                                title="Remove user policies from this bucket" 
+                                class="edit-user-policies-check-icon-style"
+                                [disabled]="!nfRegistryService.currentUser.resourcePermissions.policies.canWrite">
+                                <span class="icon-x edit-delete-icons-styles"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mat-padding permission-empty-container"
+                     *ngIf="nfRegistryService.filteredUserPermsData.length === 0 && nfRegistryService.filteredGroupPermsData.length === 0"
+                     layout="row"
+                     layout-align="center center">
+                    <h3 class="empty-result-container">No results to display.</h3>
+                </div>
+            </div>
+  </div>
+        </div>
+</div>
+<router-outlet></router-outlet>

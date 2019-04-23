@@ -1,0 +1,79 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<div fxFill>
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="side-nav-title-container">
+        <span class="add-user-to-group-text-align">Add User To Group(s)</span>
+        <div class="add-users-groups-text-align" (click)="createNewGroup()">
+        <span class="icon-plus-square create-new-group-btn-align"></span>
+        <span class="create-new-grp-text-align">Create New Group</span>
+        </div>
+          <button mat-icon-button (click)="closeSideNav()">
+            <mat-icon color="primary">close</mat-icon>
+            <a href="nf-registry-manage-bucket.html"></a>
+        </button>
+        
+    </div>
+    <div class="sidenav-content style-1">
+        <div id="nifi-registry-admin-add-selected-users-to-group" class="users-container">
+            <div *ngIf="filteredUserGroups.length > 0|| isFiltered" class="pad-bottom-md">
+                <div id="nifi-registry-add-selected-users-to-group-list-container">
+                     <div class="search-users">
+                        <input type="text" class="user-search-textbox" id="searchGroups" placeholder="Find Groups" (keyup)="searchGroups();isFiltered = true">
+                        <span *ngIf="!isFiltered" class="icon-search side-nav-groups-search-icon"></span>
+			<span *ngIf="isFiltered" (click)="searchCloseBtn();isFiltered = false" class="icon-x manage-user-group-search-icon" id="manage-user-close-icon"></span>
+                    </div>
+                    <div [ngClass]="{'selected' : row.checked}" *ngFor="let row of filteredUserGroups"
+                        (click)="row.checked = !row.checked;determineAllUserGroupsSelectedState()">
+                        <div *ngFor="let column of nfRegistryService.userGroupsColumns" fxLayout="row"
+                            fxLayoutAlign="space-between center" class="td-data-table-row add-user-tile">
+                            <div class="td-data-table-cell column-container" fxFlex="{{column.width}}">
+                                 <div class="user-name-container">
+                                    <span class="icon-user-multiple user-groups-icon-styles"></span>{{column.format ?
+                            column.format(row[column.name]) : row[column.name]}}
+                                </div>
+                            </div>
+                            <div class="td-data-table-cell column-container">
+                                <span class="icon-check-circle icon-container user-selected-container"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             <div class="mat-padding push-bottom-md empty-result-container-sidenav" *ngIf="filteredUserGroups.length ===0 && isFiltered" layout="row"
+                 layout-align="center center">
+                <h3 class="empty-group-container">No results found.</h3>
+            </div>
+            </div>
+            <div class="mat-padding push-bottom-md empty-container-sidenav" *ngIf="filteredUserGroups.length === 0 && !isFiltered" layout="row"
+                 layout-align="center center">
+                <h3 class="empty-group-container">User belongs to all groups.</h3>
+            </div>
+        </div>
+    </div>
+    <hr class="side-nav-footer-border">
+    <div fxLayout="row" class="side-nav-footer">
+        <span fxFlex></span>
+        <div class="side-nav-footer-section">
+          <button (click)="cancel()" class="f-Secondary-button side-nav-footer-buttons-styles" i18n="Cancel addition of selected users to group|A button for cancelling the addition of selected users to a group in the registry.@@nf-admin-workflow-cancel-add-selected-users-to-group-button">
+             Cancel
+         </button>
+         <button [disabled]="isAddToSelectedGroupsDisabled" (click)="addToSelectedGroups()" class="f-primary-button side-nav-add-to-groups"   i18n="Add selected users to group button|A button for adding users to an existing group in the registry.@@nf-admin-workflow-add-selected-users-to-group-button">
+             Add to Group(s)
+         </button>
+        </div>
+    </div>
+</div>

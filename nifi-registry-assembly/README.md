@@ -29,9 +29,9 @@ Registry—a subproject of Apache NiFi—is a complementary application that pro
 
 ## Getting Started
 
-To start NiFi Registry:
+To start NiFi:
 - [linux/osx] execute bin/nifi-registry.sh start
-- [windows] execute bin/run-nifi-registry.bat
+- [windows] execute bin/start-nifi-registry.bat
 - Direct your browser to http://localhost:18080/nifi-registry/
 
 ## Getting Help

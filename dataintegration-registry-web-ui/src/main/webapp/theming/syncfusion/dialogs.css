@@ -1,0 +1,30 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Apr 17, 2018, 9:59:53 AM
+    Author     : sangavi.eswaramoorth
+*/
+
+.create-bucket-dialog{
+    width: 400px!important;
+    height: 225px!important;
+}
+.dialog-header-conatiner{
+    width: 100%;
+    height: 44px;
+    border-bottom: 1px solid lightgray;
+    background: #F9F9F9;
+}
+.dialog-content-container{
+    margin:0px 20px;
+    padding-top: 32px;
+/*    padding-bottom: 35px!important;*/
+}
+.dialog-footer{
+   border-top:1px solid lightgray;
+   padding: 5px 20px;
+   background: #F9F9F9;
+}
